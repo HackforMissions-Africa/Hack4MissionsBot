@@ -75,6 +75,6 @@ def main():
 if __name__ == '__main__':
     # credentials have been moved to a config file to remove them from public github visibility
     config = configparser.ConfigParser()
-    config.read("./config.ini")
+    config.read("/home/bots/config.ini")
     ACCESS_TOKEN = config.get('Creds', 'ACCESS_TOKEN')
     VERIFY_TOKEN = config.get('Creds', 'VERIFY_TOKEN')
