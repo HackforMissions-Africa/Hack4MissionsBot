@@ -12,6 +12,7 @@ if __name__ == '__main__':
         for t in list(range(8)):
             bible.main()
             time.sleep(10800)
+            
     except Exception as e:
         raise e
 
