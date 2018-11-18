@@ -2,9 +2,23 @@ import json
 import requests
 import sys
 sys.path.insert(0, '/home/bots/')
-import simi
+try:
+    import simi
+except:
+    pass
 import random
 import configparser
+from bs4 import BeautifulSoup
+
+
+# credentials have been moved to a config file to remove them from public github visibility
+config = configparser.ConfigParser()
+config.read("/home/bots/config.ini")
+ACCESS_TOKEN = config.get('Creds', 'ACCESS_TOKEN')
+VERIFY_TOKEN = config.get('Creds', 'VERIFY_TOKEN')
+
+# get test user ids, func refused. var is not added to global so it raises NameError
+# users = read_users()
 
 
 
@@ -58,8 +72,8 @@ def get_verse():
 
 
 def main():
-    bible_verse = get_verse()
     users = read_users()
+    bible_verse = get_verse()
     for user_id in users:
         resp = post_to_graph(user_id, bible_verse)
         print(json.loads(resp.content))
@@ -71,10 +85,39 @@ def main():
         print(e)
 
 
+def get_kenneth():
+    users = read_users()
+    response = requests.get("http://www.kcm.org/read/faith-to-faith")
+    soup = BeautifulSoup(response.text, 'html.parser')
+    # print(len(soup))
+    sample = soup.find('meta', attrs={'name':'description'} )
+    print(sample, '\n')
+    scripture = soup.find_all('div', class_="body")
+    print(scripture)
 
-if __name__ == '__main__':
-    # credentials have been moved to a config file to remove them from public github visibility
-    config = configparser.ConfigParser()
-    config.read("./config.ini")
-    ACCESS_TOKEN = config.get('Creds', 'ACCESS_TOKEN')
-    VERIFY_TOKEN = config.get('Creds', 'VERIFY_TOKEN')
+    if sample and scripture:
+        for user_id in users:
+            resp = post_to_graph(user_id, sample['content']+'\n\n'+"Read more here:\n http://www.kcm.org/read/faith-to-faith")
+            # resp = post_to_graph(user_id, sample['content']+'\n\n'+scripture[0].text)
+            print(json.loads(resp.content))
+
+        try:
+            json.loads(resp.content)['error']
+            get_kenneth()
+        except Exception as e:
+            # print(e)
+            pass
+    else:
+        print('Recursion')
+        get_kenneth()
+
+
+# if __name__ == '__main__':
+    # # credentials have been moved to a config file to remove them from public github visibility
+    # config = configparser.ConfigParser()
+    # config.read("/home/bots/config.ini")
+    # ACCESS_TOKEN = config.get('Creds', 'ACCESS_TOKEN')
+    # VERIFY_TOKEN = config.get('Creds', 'VERIFY_TOKEN')
+
+    # # get test user ids, func refused. var is not added to global so it raises NameError
+    # # users = read_users()
