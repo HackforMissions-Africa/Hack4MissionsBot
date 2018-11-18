@@ -2,12 +2,10 @@ from flask import Flask, request
 import requests
 import simi
 import json
+import configparser
 
 
 app = Flask(__name__)
-VERIFY_TOKEN = "hackformissions"
-ACCESS_TOKEN = "EAAE0Q0x0lkEBADZB3886ZAYTzv7qpTSzYeBk2h3YZAWWmO6NnSxf0wMd7nh9VpdZCrEoXiPS7huhtz18Ez2bpD6GGxoRRUcGXFQZCjSdVlOusO0HMzKrLg4hUamIloQNn2Ds0HPpQMEpTzC5IZCJNdleylxaWouQSBcLDPD78MywZDZD"
-test_users = []
 
 
 @app.route("/")
@@ -62,8 +60,15 @@ def post_to_graph(user_id, reply_msg):
 
 
 if __name__ == '__main__':
+    # this test users obj was used to add test users' ids to the bots database; to be used for the scheduled task
     # test_users = simi.xload( "/home/bots/test_users.bot" )
-    # test_users = []
+    
+    # credentials have been moved to a config file to remove them from public github visibility
+    config = configparser.ConfigParser()
+    config.read("./config.ini")
+    ACCESS_TOKEN = config.get('Creds', 'ACCESS_TOKEN')
+    VERIFY_TOKEN = config.get('Creds', 'VERIFY_TOKEN')
+
     app.run()
 
 

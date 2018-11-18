@@ -4,9 +4,8 @@ import sys
 sys.path.insert(0, '/home/bots/')
 import simi
 import random
+import configparser
 
-
-ACCESS_TOKEN = "EAAE0Q0x0lkEBADZB3886ZAYTzv7qpTSzYeBk2h3YZAWWmO6NnSxf0wMd7nh9VpdZCrEoXiPS7huhtz18Ez2bpD6GGxoRRUcGXFQZCjSdVlOusO0HMzKrLg4hUamIloQNn2Ds0HPpQMEpTzC5IZCJNdleylxaWouQSBcLDPD78MywZDZD"
 
 
 def read_bible(  ):
@@ -72,3 +71,10 @@ def main():
         print(e)
 
 
+
+if __name__ == '__main__':
+    # credentials have been moved to a config file to remove them from public github visibility
+    config = configparser.ConfigParser()
+    config.read("./config.ini")
+    ACCESS_TOKEN = config.get('Creds', 'ACCESS_TOKEN')
+    VERIFY_TOKEN = config.get('Creds', 'VERIFY_TOKEN')
